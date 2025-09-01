@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Пинг-Понг для Telegram</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Пинг-Понг</title>
     <style>
         body {
             margin: 0;
@@ -12,7 +12,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             font-family: 'Arial', sans-serif;
             overflow: hidden;
         }
@@ -22,10 +22,11 @@
             width: 320px;
             height: 568px;
             background: #000;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
             touch-action: none;
+            border: 2px solid #333;
         }
         
         .game-area {
@@ -33,63 +34,7 @@
             width: 100%;
             height: 100%;
             background: #000;
-        }
-        
-        .paddle {
-            position: absolute;
-            width: 60px;
-            height: 10px;
-            background: #0f0;
-            border-radius: 5px;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .ball {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #fff;
-            border-radius: 50%;
-            left: 50%;
-            top: 50%;
-        }
-        
-        .score {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .game-over {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-size: 24px;
-            display: none;
-        }
-        
-        .game-over button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #0f0;
-            color: #000;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
+            overflow: hidden;
         }
         
         .center-line {
@@ -98,49 +43,138 @@
             height: 100%;
             left: 50%;
             top: 0;
-            background: rgba(255, 255, 255, 0.2);
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent);
+            background-size: 2px 10px;
+            background-repeat: repeat-y;
             transform: translateX(-50%);
         }
         
-        .start-screen {
+        .paddle {
+            position: absolute;
+            width: 60px;
+            height: 12px;
+            background: linear-gradient(90deg, #00c853, #64dd17);
+            border-radius: 6px;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 8px rgba(0, 200, 83, 0.6);
+            transition: transform 0.05s ease;
+        }
+        
+        .ball {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: pulse 1s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.9; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        .score {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        
+        .high-score {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #ffeb3b;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .start-screen, .game-over {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .start-screen {
+            background: rgba(0, 0, 0, 0.85);
             color: #fff;
         }
         
-        .start-screen h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
+        .game-over {
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            display: none;
         }
         
-        .start-screen button {
-            padding: 15px 30px;
-            background: #0f0;
+        .start-screen h1, .game-over h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #00c853;
+            text-shadow: 0 0 5px rgba(0, 200, 83, 0.5);
+        }
+        
+        .start-screen p, .game-over p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #ccc;
+            max-width: 250px;
+        }
+        
+        button {
+            padding: 14px 28px;
+            background: linear-gradient(90deg, #00c853, #64dd17);
             color: #000;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 18px;
-            cursor: pointer;
             font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 200, 83, 0.4);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0, 200, 83, 0.5);
+        }
+        
+        .effect {
+            position: absolute;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: expand 0.6s ease-out forwards;
+        }
+        
+        @keyframes expand {
+            to { transform: scale(3); opacity: 0; }
         }
         
         .controls {
             position: absolute;
             bottom: 50px;
             width: 100%;
-            display: flex;
-            justify-content: space-around;
-            color: #fff;
+            text-align: center;
+            color: #888;
             font-size: 12px;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -151,23 +185,22 @@
             <div class="paddle"></div>
             <div class="ball"></div>
             <div class="score">Очки: 0</div>
+            <div class="high-score">Рекорд: 0</div>
             
             <div class="start-screen">
                 <h1>Пинг-Понг</h1>
-                <p>Нажмите, чтобы начать игру</p>
-                <button id="startButton">Начать игру</button>
+                <p>Отбивайте мяч ракеткой. Чем дольше держите — тем больше очков!</p>
+                <button id="startButton">Играть</button>
             </div>
             
             <div class="game-over">
                 <h2>Игра окончена</h2>
-                <p>Ваши очки: <span id="finalScore">0</span></p>
-                <button id="restartButton">Играть снова</button>
+                <p>Ваш счёт: <span id="finalScore">0</span></p>
+                <p>Рекорд: <span id="bestScore">0</span></p>
+                <button id="restartButton">Ещё раз</button>
             </div>
             
-            <div class="controls">
-                <div>Проведите пальцем</div>
-                <div>для управления</div>
-            </div>
+            <div class="controls">Проведите пальцем для управления</div>
         </div>
     </div>
 
@@ -177,9 +210,11 @@
             const paddle = document.querySelector('.paddle');
             const ball = document.querySelector('.ball');
             const scoreDisplay = document.querySelector('.score');
+            const highScoreDisplay = document.querySelector('.high-score');
             const startScreen = document.querySelector('.start-screen');
             const gameOverScreen = document.querySelector('.game-over');
             const finalScoreDisplay = document.getElementById('finalScore');
+            const bestScoreDisplay = document.getElementById('bestScore');
             const startButton = document.getElementById('startButton');
             const restartButton = document.getElementById('restartButton');
             
@@ -194,24 +229,25 @@
             let ballSpeedX = 3;
             let ballSpeedY = 4;
             let score = 0;
+            let highScore = localStorage.getItem('pongHighScore') || 0;
+            highScoreDisplay.textContent = `Рекорд: ${highScore}`;
+            
             let isGameRunning = false;
+            let isDragging = false;
+            let lastTouchX = 0;
             let animationId;
             
             // Touch controls
-            let isDragging = false;
-            let lastTouchX = 0;
-            
             gameArea.addEventListener('touchstart', handleTouchStart, false);
             gameArea.addEventListener('touchmove', handleTouchMove, false);
             gameArea.addEventListener('touchend', handleTouchEnd, false);
             
             function handleTouchStart(e) {
                 e.preventDefault();
-                if (!isGameRunning) {
+                if (!isGameRunning && !isDragging) {
                     startGame();
                     return;
                 }
-                
                 isDragging = true;
                 lastTouchX = e.touches[0].clientX - gameArea.getBoundingClientRect().left;
                 updatePaddle(lastTouchX);
@@ -231,13 +267,12 @@
                 isDragging = false;
             }
             
-            // Mouse controls for testing
+            // Mouse controls
             gameArea.addEventListener('mousedown', (e) => {
                 if (!isGameRunning) {
                     startGame();
                     return;
                 }
-                
                 isDragging = true;
                 const mouseX = e.clientX - gameArea.getBoundingClientRect().left;
                 updatePaddle(mouseX);
@@ -250,22 +285,30 @@
                 }
             });
             
-            gameArea.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
-            
-            gameArea.addEventListener('mouseleave', () => {
-                isDragging = false;
+            ['mouseup', 'mouseleave'].forEach(event => {
+                gameArea.addEventListener(event, () => {
+                    isDragging = false;
+                });
             });
             
             function updatePaddle(x) {
                 const paddleHalfWidth = paddleWidth / 2;
                 const minX = paddleHalfWidth;
                 const maxX = gameWidth - paddleHalfWidth;
-                
                 const constrainedX = Math.max(minX, Math.min(maxX, x));
                 paddleX = constrainedX - paddleHalfWidth;
                 paddle.style.left = `${paddleX}px`;
+            }
+            
+            function createEffect(x, y) {
+                const effect = document.createElement('div');
+                effect.classList.add('effect');
+                effect.style.left = `${x}px`;
+                effect.style.top = `${y}px`;
+                effect.style.width = '10px';
+                effect.style.height = '10px';
+                gameArea.appendChild(effect);
+                setTimeout(() => effect.remove(), 600);
             }
             
             function startGame() {
@@ -273,22 +316,32 @@
                 gameOverScreen.style.display = 'none';
                 score = 0;
                 scoreDisplay.textContent = `Очки: ${score}`;
-                resetBall();
-                isGameRunning = true;
-                gameLoop();
-            }
-            
-            function resetBall() {
-                ballX = gameWidth / 2;
-                ballY = gameHeight / 2;
+                
+                // Увеличиваем скорость с каждым уровнем
                 ballSpeedX = (Math.random() > 0.5 ? 1 : -1) * 3;
                 ballSpeedY = 4;
+                
+                ballX = gameWidth / 2;
+                ballY = gameHeight / 2;
+                ball.style.left = `${ballX}px`;
+                ball.style.top = `${ballY}px`;
+                
+                isGameRunning = true;
+                gameLoop();
             }
             
             function gameOver() {
                 isGameRunning = false;
                 cancelAnimationFrame(animationId);
+                
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('pongHighScore', highScore);
+                    highScoreDisplay.textContent = `Рекорд: ${highScore}`;
+                }
+                
                 finalScoreDisplay.textContent = score;
+                bestScoreDisplay.textContent = highScore;
                 gameOverScreen.style.display = 'flex';
             }
             
@@ -299,44 +352,48 @@
                 ballX += ballSpeedX;
                 ballY += ballSpeedY;
                 
-                // Wall collision (left and right)
+                // Wall collision
                 if (ballX <= 0 || ballX >= gameWidth - ballSize) {
                     ballSpeedX = -ballSpeedX;
+                    createEffect(ballX, ballY);
                 }
                 
-                // Top collision
                 if (ballY <= 0) {
                     ballSpeedY = -ballSpeedY;
+                    createEffect(ballX, ballY);
                 }
                 
                 // Paddle collision
                 if (ballY >= gameHeight - ballSize - 30 && 
                     ballX + ballSize >= paddleX && 
                     ballX <= paddleX + paddleWidth) {
-                    ballSpeedY = -Math.abs(ballSpeedY);
                     
-                    // Change ball direction based on where it hits the paddle
+                    // Отскок + эффект
+                    ballSpeedY = -Math.abs(ballSpeedY) * 1.05;
+                    
                     const hitPosition = (ballX + ballSize/2) - (paddleX + paddleWidth/2);
-                    ballSpeedX = hitPosition * 0.15;
-                    
-                    // Increase speed slightly
-                    if (Math.abs(ballSpeedY) < 8) {
-                        ballSpeedY *= 1.05;
-                    }
+                    ballSpeedX = hitPosition * 0.18;
                     
                     score++;
                     scoreDisplay.textContent = `Очки: ${score}`;
+                    
+                    createEffect(ballX, ballY);
                 }
                 
-                // Bottom collision (game over)
+                // Game over
                 if (ballY >= gameHeight) {
                     gameOver();
                     return;
                 }
                 
-                // Update positions
+                // Update ball position
                 ball.style.left = `${ballX}px`;
                 ball.style.top = `${ballY}px`;
+                
+                // Увеличиваем скорость со временем (максимум до 8)
+                if (Math.abs(ballSpeedY) < 8) {
+                    ballSpeedY *= 1.0005;
+                }
                 
                 animationId = requestAnimationFrame(gameLoop);
             }
@@ -344,17 +401,11 @@
             startButton.addEventListener('click', startGame);
             restartButton.addEventListener('click', startGame);
             
-            // Handle window resize
+            // Responsive
             window.addEventListener('resize', () => {
                 gameWidth = gameArea.offsetWidth;
                 gameHeight = gameArea.offsetHeight;
                 paddleWidth = paddle.offsetWidth;
-                
-                // Keep paddle within bounds
-                const paddleHalfWidth = paddleWidth / 2;
-                const maxX = gameWidth - paddleHalfWidth;
-                paddleX = Math.min(paddleX + paddleHalfWidth, maxX) - paddleHalfWidth;
-                paddle.style.left = `${paddleX}px`;
             });
         });
     </script>
